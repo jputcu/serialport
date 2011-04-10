@@ -1,0 +1,30 @@
+Name:           serialport
+Version:        0.0.0
+Cabal-Version:  >= 1.2
+Build-Type:     Custom
+license:        BSD3
+license-file:   LICENSE
+copyright:      (c) 2009 Joris Putcuyps
+author:         Joris Putcuyps
+maintainer:     Joris.Putcuyps@gmail.com
+homepage:       https://github.com/jputcu/serialport
+bug-reports:    https://github.com/jputcu/serialport/issues
+synopsis:       Cross platform serial port library.  
+category:       Hardware
+
+source-repository head
+  type:     git
+  location: git://github.com/jputcu/serialport.git
+
+Library
+  Exposed-Modules:    System.Hardware.Serialport
+  Build-Depends:      base >= 4, base < 5 
+  ghc-options:        -Wall
+
+  if !os(windows)
+    Build-Depends:    unix
+    Exposed-Modules:  System.Hardware.Serialport.Posix
+  else
+    Build-Depends:    Win32
+    Exposed-Modules:  System.Hardware.Serialport.Windows
+                      System.Win32.Comm
