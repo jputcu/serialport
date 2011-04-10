@@ -1,6 +1,6 @@
 Name:           serialport
-Version:        0.0.0
-Cabal-Version:  >= 1.2
+Version:        0.4.0
+Cabal-Version:  >= 1.6
 Build-Type:     Custom
 license:        BSD3
 license-file:   LICENSE
@@ -9,7 +9,8 @@ author:         Joris Putcuyps
 maintainer:     Joris.Putcuyps@gmail.com
 homepage:       https://github.com/jputcu/serialport
 bug-reports:    https://github.com/jputcu/serialport/issues
-synopsis:       Cross platform serial port library.  
+synopsis:       Cross platform serial port library.
+description:    Cross platform haskell library for using the serial port.
 category:       Hardware
 
 source-repository head
