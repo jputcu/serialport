@@ -20,7 +20,7 @@ source-repository head
 Library
   Exposed-Modules:    System.Hardware.Serialport
                       System.Hardware.Serialport.Types
-  Build-Depends:      base >= 4, base < 5 
+  Build-Depends:      base >= 4, base < 5
   ghc-options:        -Wall
 
   if !os(windows)

@@ -20,7 +20,7 @@ module System.Hardware.Serialport (
   -- | You don't need the get or set functions, they are used by openSerial
   ,SerialPortSettings(..)
   ,defaultSerialSettings
-  -- * Serial methods 
+  -- * Serial methods
   ,openSerial
   ,sendChar
   ,recvChar

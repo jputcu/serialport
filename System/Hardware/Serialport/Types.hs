@@ -30,16 +30,16 @@ data Parity = Even | Odd | NoParity
 data FlowControl = Software | NoFlowControl
 
 data SerialPortSettings = SerialPortSettings {
-                      commSpeed :: CommSpeed,     -- ^ baudrate
-                      bitsPerWord :: Word8,       -- ^ Number of bits in a word
-                      stopb :: StopBits,          -- ^ Number of stop bits
-                      parity :: Parity,           -- ^ Type of parity
-                      flowControl :: FlowControl, -- ^ Type of flowcontrol
-                      timeout :: Int              -- ^ Timeout when receiving a char in tenth of seconds
+                      commSpeed    :: CommSpeed,   -- ^ baudrate
+                      bitsPerWord  :: Word8,       -- ^ Number of bits in a word
+                      stopb        :: StopBits,    -- ^ Number of stop bits
+                      parity       :: Parity,      -- ^ Type of parity
+                      flowControl  :: FlowControl, -- ^ Type of flowcontrol
+                      timeout      :: Int          -- ^ Timeout when receiving a char in tenth of seconds
                   }
-                      
 
-data SerialPort = SerialPort { 
+
+data SerialPort = SerialPort {
 #if defined(mingw32_HOST_OS)
                       handle :: HANDLE,
 #else
@@ -50,7 +50,7 @@ data SerialPort = SerialPort {
 
 
 -- | Most commonly used configuration
---  
+--
 --  - 9600 baud
 --
 --  - 8 data bits

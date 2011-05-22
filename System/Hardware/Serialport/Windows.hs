@@ -1,4 +1,4 @@
-module System.Hardware.Serialport.Windows where 
+module System.Hardware.Serialport.Windows where
 
 import Data.Bits
 import qualified System.Win32.Comm as Comm
@@ -16,11 +16,11 @@ import System.Hardware.Serialport.Types
 openSerial :: String      -- ^ The filename of the serial port, such as @COM5@ or @\/\/.\/CNCA0@
            -> SerialPortSettings
            -> IO SerialPort
-openSerial dev settings = do 
+openSerial dev settings = do
   h <- createFile dev access_mode share_mode security_attr create_mode file_attr template_file
   let serial_port = SerialPort h defaultSerialSettings
   return =<< setSerialSettings serial_port settings
-  where 
+  where
     access_mode = gENERIC_READ .|. gENERIC_WRITE
     share_mode = fILE_SHARE_NONE
     security_attr = Nothing
@@ -32,7 +32,7 @@ openSerial dev settings = do
 -- |Possibly receive a character unless the timeout given in openSerial is exceeded.
 recvChar :: SerialPort -> IO (Maybe Char)
 recvChar (SerialPort h _) =
-  allocaBytes 1 $ \ p_n -> do 
+  allocaBytes 1 $ \ p_n -> do
   received <- win32_ReadFile h p_n count overlapped
   if received == 0
     then return Nothing
@@ -46,7 +46,7 @@ recvChar (SerialPort h _) =
 -- |Send a character
 sendChar :: SerialPort -> Char -> IO ()
 sendChar (SerialPort h _) s =
-  with s (\ p_s -> do _ <- win32_WriteFile h p_s count overlapped 
+  with s (\ p_s -> do _ <- win32_WriteFile h p_s count overlapped
                       return () )
   where
     count = 1
@@ -77,8 +77,8 @@ setSerialSettings :: SerialPort           -- ^ The currently opened serial port
                   -> IO SerialPort        -- ^ New serial port
 setSerialSettings (SerialPort h _) new_settings = do
   let ct = Comm.COMMTIMEOUTS {
-                    Comm.readIntervalTimeout = maxBound :: DWORD, 
-                    Comm.readTotalTimeoutMultiplier = maxBound :: DWORD, 
+                    Comm.readIntervalTimeout = maxBound :: DWORD,
+                    Comm.readTotalTimeoutMultiplier = maxBound :: DWORD,
                     Comm.readTotalTimeoutConstant = fromIntegral (timeout new_settings) * 100,
                     Comm.writeTotalTimeoutMultiplier = 0,
                     Comm.writeTotalTimeoutConstant = 0 }

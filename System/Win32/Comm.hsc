@@ -92,7 +92,7 @@ getCommState h =
   alloca (\dcbp -> do _ <- c_GetCommState h dcbp
                       peek dcbp )
 
- 
+
 --BOOL WINAPI GetCommState(
 --  __in     HANDLE hFile,
 --  __inout  LPDCB lpDCB
@@ -126,8 +126,8 @@ foreign import stdcall unsafe "winbase.h SetCommState"
 --   * If no bytes arrive within the time specified by ReadTotalTimeoutConstant, ReadFile times out.
 --
 type LPCOMMTIMEOUTS = Ptr COMMTIMEOUTS
-data COMMTIMEOUTS = COMMTIMEOUTS 
-    { readIntervalTimeout :: DWORD, -- in milliseconds 
+data COMMTIMEOUTS = COMMTIMEOUTS
+    { readIntervalTimeout :: DWORD, -- in milliseconds
       readTotalTimeoutMultiplier :: DWORD,  -- in milliseconds
       readTotalTimeoutConstant :: DWORD,  -- in milliseconds
       writeTotalTimeoutMultiplier :: DWORD,  -- in milliseconds
@@ -155,7 +155,7 @@ instance Storable COMMTIMEOUTS where
                           readTotalTimeoutConstant = _readTotalTimeoutConstant,
                           writeTotalTimeoutMultiplier = _writeTotalTimeoutMultiplier,
                           writeTotalTimeoutConstant = _writeTotalTimeoutConstant }
-    
+
 
 getCommTimeouts :: HANDLE -> IO COMMTIMEOUTS
 getCommTimeouts h =
@@ -170,8 +170,8 @@ foreign import stdcall unsafe "winbase.h GetCommTimeouts"
 
 
 
--- | 
--- 
+-- |
+--
 -- On success it returns nonzero. On failure, the return value is zero and the GetLastError should be called.
 --
 setCommTimeouts :: HANDLE -> COMMTIMEOUTS -> IO ()
@@ -197,7 +197,7 @@ clrRTS = #const CLRRTS
 setRTS :: DWORD
 setRTS = #const SETRTS
 
--- 
+--
 --
 foreign import stdcall unsafe "winbase.h EscapeCommFunction"
   c_EscapeCommFunction :: HANDLE -> DWORD -> IO BOOL

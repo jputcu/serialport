@@ -18,7 +18,7 @@ openSerial dev settings = do
   fd' <- openFd dev ReadWrite Nothing defaultFileFlags { noctty = True }
   let serial_port = (SerialPort fd' defaultSerialSettings)
   return =<< setSerialSettings serial_port settings
-        
+
 
 -- |Possibly receive a character unless the timeout given in openSerial is exceeded.
 recvChar :: SerialPort -> IO (Maybe Char)
@@ -38,7 +38,7 @@ sendChar (SerialPort fd' _ ) c =
 -- |Close the serial port
 closeSerial :: SerialPort -> IO ()
 closeSerial (SerialPort fd' _ ) =
-  closeFd fd' 
+  closeFd fd'
 
 
 #include <sys/ioctl.h>
@@ -59,7 +59,7 @@ getTIOCM fd' =
 setTIOCM :: Fd -> Int -> IO ()
 setTIOCM fd' val =
   with val $ cIoctl' fd' #{const TIOCMSET}
-  
+
 
 -- |Set the Data Terminal Ready level
 setDTR :: SerialPort -> Bool -> IO ()
