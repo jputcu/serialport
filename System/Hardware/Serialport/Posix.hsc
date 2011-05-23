@@ -24,15 +24,28 @@ openSerial dev settings = do
 recvChar :: SerialPort -> IO (Maybe Char)
 recvChar (SerialPort fd' _) = do
   result <- try $ fdRead fd' 1
-  case result of
-    Right (str, _) -> return $ Just $ head str
-    Left _         -> return Nothing
+  return $ case result of
+             Right (str, _) -> Just $ head str
+             Left _         -> Nothing
+
+
+recvString :: SerialPort -> IO String
+recvString (SerialPort fd' _) = do
+  result <- try $ fdRead fd' 128
+  return $ case result of
+             Right (str, _) -> str
+             Left _         -> ""
 
 
 -- |Send a character
 sendChar :: SerialPort -> Char -> IO ()
 sendChar (SerialPort fd' _ ) c =
   fdWrite fd' [c] >> return ()
+
+
+sendString :: SerialPort -> String -> IO ()
+sendString (SerialPort fd' _) s =
+  fdWrite fd' s >> return ()
 
 
 -- |Close the serial port

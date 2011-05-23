@@ -23,7 +23,9 @@ module System.Hardware.Serialport (
   -- * Serial methods
   ,openSerial
   ,sendChar
+  ,sendString
   ,recvChar
+  ,recvString
   ,closeSerial
   ,setDTR
   ,setRTS

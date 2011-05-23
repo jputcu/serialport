@@ -43,6 +43,17 @@ recvChar (SerialPort h _) =
     overlapped = Nothing
 
 
+recvString :: SerialPort -> IO String
+recvString (SerialPort h _) =
+  allocaBytes 128 $ \ p_n -> do
+    recv_cnt <- win32_ReadFile h p_n count overlapped
+    c <- peekCStringLen (p_n, fromIntegral recv_cnt)
+    return c
+  where
+    count = 128
+    overlapped = Nothing
+
+
 -- |Send a character
 sendChar :: SerialPort -> Char -> IO ()
 sendChar (SerialPort h _) s =
@@ -50,6 +61,15 @@ sendChar (SerialPort h _) s =
                       return () )
   where
     count = 1
+    overlapped = Nothing
+
+
+sendString :: SerialPort -> String -> IO ()
+sendString (SerialPort h _) s =
+  withCString s (\ p_s -> do _ <- win32_WriteFile h p_s (fromIntegral count) overlapped
+                             return () )
+  where
+    count = length s
     overlapped = Nothing
 
 
