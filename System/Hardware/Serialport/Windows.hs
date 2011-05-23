@@ -33,11 +33,11 @@ openSerial dev settings = do
 recvChar :: SerialPort -> IO (Maybe Char)
 recvChar (SerialPort h _) =
   allocaBytes 1 $ \ p_n -> do
-  received <- win32_ReadFile h p_n count overlapped
-  if received == 0
-    then return Nothing
-    else do c <- peek p_n :: IO CChar
-            return $ Just $ castCCharToChar c
+    received <- win32_ReadFile h p_n count overlapped
+    if received == 0
+      then return Nothing
+      else do c <- peek p_n :: IO CChar
+              return $ Just $ castCCharToChar c
   where
     count = 1
     overlapped = Nothing
