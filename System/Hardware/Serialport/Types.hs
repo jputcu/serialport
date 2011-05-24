@@ -1,4 +1,5 @@
 {-# LANGUAGE CPP #-}
+{-# OPTIONS_HADDOCK hide #-}
 module System.Hardware.Serialport.Types where
 
 import Data.Word

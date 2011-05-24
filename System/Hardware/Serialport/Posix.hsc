@@ -1,4 +1,5 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
+{-# OPTIONS_HADDOCK hide #-}
 module System.Hardware.Serialport.Posix where
 
 import System.IO.Error

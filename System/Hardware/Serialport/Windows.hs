@@ -1,3 +1,4 @@
+{-# OPTIONS_HADDOCK hide #-}
 module System.Hardware.Serialport.Windows where
 
 import Data.Bits

@@ -19,14 +19,14 @@ source-repository head
 
 Library
   Exposed-Modules:    System.Hardware.Serialport
-                      System.Hardware.Serialport.Types
+  Other-Modules:      System.Hardware.Serialport.Types
   Build-Depends:      base >= 4, base < 5
   ghc-options:        -Wall
 
   if !os(windows)
     Build-Depends:    unix
-    Exposed-Modules:  System.Hardware.Serialport.Posix
+    Other-Modules:    System.Hardware.Serialport.Posix
   else
     Build-Depends:    Win32
-    Exposed-Modules:  System.Hardware.Serialport.Windows
+    Other-Modules:    System.Hardware.Serialport.Windows
                       System.Win32.Comm

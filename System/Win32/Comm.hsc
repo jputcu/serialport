@@ -1,4 +1,5 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
+{-# OPTIONS_HADDOCK hide #-}
 module System.Win32.Comm where
 
 import System.Win32.Types
