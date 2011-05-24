@@ -49,8 +49,7 @@ recvString :: SerialPort -> IO String
 recvString (SerialPort h _) =
   allocaBytes 128 $ \ p_n -> do
     recv_cnt <- win32_ReadFile h p_n count overlapped
-    c <- peekCStringLen (p_n, fromIntegral recv_cnt)
-    return c
+    peekCStringLen (p_n, fromIntegral recv_cnt)
   where
     count = 128
     overlapped = Nothing
