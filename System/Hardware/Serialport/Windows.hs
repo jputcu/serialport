@@ -44,6 +44,7 @@ recvChar (SerialPort h _) =
     overlapped = Nothing
 
 
+-- |Receive a string
 recvString :: SerialPort -> IO String
 recvString (SerialPort h _) =
   allocaBytes 128 $ \ p_n -> do
@@ -65,6 +66,7 @@ sendChar (SerialPort h _) s =
     overlapped = Nothing
 
 
+-- |Send a string
 sendString :: SerialPort -> String -> IO ()
 sendString (SerialPort h _) s =
   withCString s (\ p_s -> do _ <- win32_WriteFile h p_s (fromIntegral count) overlapped

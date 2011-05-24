@@ -3,9 +3,11 @@
 -- |This module provides the serial port interface.
 --
 -- > import System.Hardware.Serialport
--- > s <- openSerial "/dev/ttyUSB0" defaultSerialSettings
--- > sendChar s 'A'
--- > Just resp <- recvChar s
+-- > let port = "COM3"          -- Windows
+-- > let port = "/dev/ttyUSB0"  -- Linux
+-- > s <- openSerial port defaultSerialSettings { commSpeed = CS2400 }
+-- > sendString s "AT\r"
+-- > recvString s >>= print
 -- > closeSerial s
 --
 
@@ -20,17 +22,20 @@ module System.Hardware.Serialport (
   -- | You don't need the get or set functions, they are used by openSerial
   ,SerialPortSettings(..)
   ,defaultSerialSettings
+  ,setSerialSettings
+  ,getSerialSettings
   -- * Serial methods
+  -- ** Device
   ,openSerial
+  ,closeSerial
+  -- ** Sending & receiving
   ,sendChar
   ,sendString
   ,recvChar
   ,recvString
-  ,closeSerial
+  -- ** Line control
   ,setDTR
   ,setRTS
-  ,setSerialSettings
-  ,getSerialSettings
   ) where
 
 #if defined(mingw32_HOST_OS)

@@ -30,6 +30,7 @@ recvChar (SerialPort fd' _) = do
              Left _         -> Nothing
 
 
+-- |Receive a string
 recvString :: SerialPort -> IO String
 recvString (SerialPort fd' _) = do
   result <- try $ fdRead fd' 128
@@ -44,6 +45,7 @@ sendChar (SerialPort fd' _ ) c =
   fdWrite fd' [c] >> return ()
 
 
+-- |Send a string
 sendString :: SerialPort -> String -> IO ()
 sendString (SerialPort fd' _) s =
   fdWrite fd' s >> return ()
