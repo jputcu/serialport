@@ -16,7 +16,7 @@ openSerial :: FilePath            -- ^ The filename of the serial port, such as 
            -> SerialPortSettings
            -> IO SerialPort
 openSerial dev settings = do
-  fd' <- openFd dev ReadWrite Nothing defaultFileFlags { noctty = True }
+  fd' <- openFd dev ReadWrite Nothing defaultFileFlags { noctty = True , nonBlock = True }
   let serial_port = (SerialPort fd' defaultSerialSettings)
   return =<< setSerialSettings serial_port settings
 
