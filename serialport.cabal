@@ -1,5 +1,5 @@
 Name:           serialport
-Version:        0.4.1
+Version:        0.4.2
 Cabal-Version:  >= 1.6
 Build-Type:     Custom
 license:        BSD3
@@ -20,11 +20,11 @@ source-repository head
 Library
   Exposed-Modules:    System.Hardware.Serialport
   Other-Modules:      System.Hardware.Serialport.Types
-  Build-Depends:      base >= 4, base < 5
+  Build-Depends:      base >= 4 && < 5, bytestring
   ghc-options:        -Wall
 
   if !os(windows)
-    Build-Depends:    unix
+    Build-Depends:    unix, unix-bytestring >= 0.3 && < 4
     Other-Modules:    System.Hardware.Serialport.Posix
   else
     Build-Depends:    Win32

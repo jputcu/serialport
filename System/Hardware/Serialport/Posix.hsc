@@ -1,15 +1,15 @@
-{-# LANGUAGE ForeignFunctionInterface #-}
+{-# LANGUAGE ForeignFunctionInterface, ViewPatterns #-}
 {-# OPTIONS_HADDOCK hide #-}
 module System.Hardware.Serialport.Posix where
-
+import Data.ByteString (ByteString)
 import System.IO.Error
 import System.Posix.IO
+import qualified System.Posix.IO.ByteString as BS
 import System.Posix.Types
 import System.Posix.Terminal
 import System.Hardware.Serialport.Types
 import Foreign
 import Foreign.C
-
 
 -- |Open and configure a serial port
 openSerial :: FilePath            -- ^ The filename of the serial port, such as @\/dev\/ttyS0@ or @\/dev\/ttyUSB0@
@@ -17,9 +17,18 @@ openSerial :: FilePath            -- ^ The filename of the serial port, such as 
            -> IO SerialPort
 openSerial dev settings = do
   fd' <- openFd dev ReadWrite Nothing defaultFileFlags { noctty = True }
-  let serial_port = (SerialPort fd' defaultSerialSettings)
+  let serial_port = SerialPort fd' defaultSerialSettings
   return =<< setSerialSettings serial_port settings
 
+-- |@recv port n@ receives up to @n@ bytes over a serial port.
+recv :: SerialPort -> Int -> IO (Maybe ByteString)
+recv (SerialPort fd' _) (fromIntegral -> n) = 
+  either (const Nothing) Just `fmap` try (BS.fdRead fd' n)
+
+-- |Send bytes over a serial port. Returns the number of bytes
+-- actually sent.
+send :: SerialPort -> ByteString -> IO Int
+send (SerialPort fd' _) = fmap fromIntegral . BS.fdWrite fd'
 
 -- |Possibly receive a character unless the timeout given in openSerial is exceeded.
 recvChar :: SerialPort -> IO (Maybe Char)
