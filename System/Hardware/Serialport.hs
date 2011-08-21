@@ -35,6 +35,7 @@ module System.Hardware.Serialport (
   ,recvString
   ,send
   ,recv
+  ,recvRetry
   -- ** Line control
   ,setDTR
   ,setRTS

@@ -37,6 +37,11 @@ recv (SerialPort h _) (fromIntegral -> n) =
   allocaBytes n $ \p ->
     win32_ReadFile h p n Nothing >>= fmap Just . packCStringLen . (p,)
 
+-- |@recvRetry port numRetries n@ tries up to @numRetries@ times to
+-- read a total of @n@ bytes over a serial port.
+recvRetry :: SerialPort -> Int -> Int -> IO (Maybe ByteString)
+recvRetry p _ n = recv p n
+
 -- |Send bytes over a serial port. Returns the number of bytes
 -- actually sent.
 send :: SerialPort -> ByteString -> IO Int

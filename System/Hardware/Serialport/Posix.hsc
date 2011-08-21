@@ -25,6 +25,16 @@ recv :: SerialPort -> Int -> IO (Maybe ByteString)
 recv (SerialPort fd' _) (fromIntegral -> n) = 
   either (const Nothing) Just `fmap` try (BS.fdRead fd' n)
 
+-- |@recvRetry port numRetries n@ tries up to @numRetries@ times to
+-- read a total of @n@ bytes over a serial port.
+recvRetry :: SerialPort -> Int -> Int -> IO (Maybe ByteString)
+recvRetry (SerialPort fd' _) retries (fromIntegral -> n) = 
+  either (const Nothing) Just `fmap` try (BS.fdReads retry 0 fd' n)
+  where retry n' tryNum
+          | n' == n = Nothing
+          | tryNum >= retries = Nothing
+          | otherwise = Just $! tryNum + 1 
+
 -- |Send bytes over a serial port. Returns the number of bytes
 -- actually sent.
 send :: SerialPort -> ByteString -> IO Int
@@ -162,7 +172,8 @@ configureSettings termOpts settings =
              `withoutMode` ProcessOutput
              `withoutMode` MapCRtoLF
              `withoutMode` EchoLF
-             `withoutMode` HangupOnClose
+             --`withoutMode` HangupOnClose
+             `withMode` HangupOnClose
              `withoutMode` KeyboardInterrupts
              `withoutMode` ExtendedFunctions
              `withMode` LocalMode
