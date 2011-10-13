@@ -51,6 +51,12 @@ sendString (SerialPort fd' _) s =
   fdWrite fd' s >> return ()
 
 
+-- |Flush buffers
+flush :: SerialPort -> IO ()
+flush (SerialPort fd' _) =
+  discardData fd' BothQueues
+
+
 -- |Close the serial port
 closeSerial :: SerialPort -> IO ()
 closeSerial (SerialPort fd' _ ) =

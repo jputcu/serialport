@@ -28,11 +28,13 @@ module System.Hardware.Serialport (
   -- ** Device
   ,openSerial
   ,closeSerial
+  ,withSerial
   -- ** Sending & receiving
   ,sendChar
   ,sendString
   ,recvChar
   ,recvString
+  ,flush
   -- ** Line control
   ,setDTR
   ,setRTS
@@ -44,3 +46,12 @@ import System.Hardware.Serialport.Windows
 import System.Hardware.Serialport.Posix
 #endif
 import System.Hardware.Serialport.Types
+
+
+-- |Safer device function, so you don't forget to close the device
+withSerial :: String -> SerialPortSettings -> ( SerialPort -> IO a ) -> IO a
+withSerial dev settings f = do
+  s <- openSerial dev settings
+  res <- f s
+  closeSerial s
+  return res

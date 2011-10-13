@@ -75,6 +75,12 @@ sendString (SerialPort h _) s =
     overlapped = Nothing
 
 
+-- |Flush buffers
+flush :: SerialPort -> IO ()
+flush (SerialPort h _) =
+  flushFileBuffers h
+
+
 -- |Close the serial port
 closeSerial :: SerialPort -> IO ()
 closeSerial (SerialPort h _) =
