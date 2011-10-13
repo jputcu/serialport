@@ -47,11 +47,8 @@ import System.Hardware.Serialport.Posix
 #endif
 import System.Hardware.Serialport.Types
 
+import Control.Exception (bracket)
 
 -- |Safer device function, so you don't forget to close the device
 withSerial :: String -> SerialPortSettings -> ( SerialPort -> IO a ) -> IO a
-withSerial dev settings f = do
-  s <- openSerial dev settings
-  res <- f s
-  closeSerial s
-  return res
+withSerial dev settings = bracket (openSerial dev settings) closeSerial
