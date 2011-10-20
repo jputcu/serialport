@@ -4,7 +4,7 @@ Cabal-Version:  >= 1.6
 Build-Type:     Custom
 license:        BSD3
 license-file:   LICENSE
-copyright:      (c) 2009 Joris Putcuyps
+copyright:      (c) 2009-2011 Joris Putcuyps
 author:         Joris Putcuyps
 maintainer:     Joris.Putcuyps@gmail.com
 homepage:       https://github.com/jputcu/serialport

@@ -28,6 +28,7 @@ module System.Hardware.Serialport (
   -- ** Device
   ,openSerial
   ,closeSerial
+  ,withSerial
   -- ** Sending & receiving
   ,sendChar
   ,sendString
@@ -36,6 +37,7 @@ module System.Hardware.Serialport (
   ,send
   ,recv
   ,recvRetry
+  ,flush
   -- ** Line control
   ,setDTR
   ,setRTS
@@ -47,3 +49,9 @@ import System.Hardware.Serialport.Windows
 import System.Hardware.Serialport.Posix
 #endif
 import System.Hardware.Serialport.Types
+
+import Control.Exception (bracket)
+
+-- |Safer device function, so you don't forget to close the device
+withSerial :: String -> SerialPortSettings -> ( SerialPort -> IO a ) -> IO a
+withSerial dev settings = bracket (openSerial dev settings) closeSerial
