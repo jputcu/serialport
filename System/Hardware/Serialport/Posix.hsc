@@ -1,8 +1,8 @@
 {-# LANGUAGE ForeignFunctionInterface, ViewPatterns #-}
 {-# OPTIONS_HADDOCK hide #-}
 module System.Hardware.Serialport.Posix where
+import qualified Control.Exception as EX
 import Data.ByteString (ByteString)
-import System.IO.Error
 import System.Posix.IO
 import qualified System.Posix.IO.ByteString as BS
 import System.Posix.Types
@@ -10,6 +10,9 @@ import System.Posix.Terminal
 import System.Hardware.Serialport.Types
 import Foreign
 import Foreign.C
+
+try :: IO a -> IO (Either IOError a)
+try = EX.try
 
 -- |Open and configure a serial port
 openSerial :: FilePath            -- ^ The filename of the serial port, such as @\/dev\/ttyS0@ or @\/dev\/ttyUSB0@
