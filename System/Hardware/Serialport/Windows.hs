@@ -14,11 +14,11 @@ import System.Hardware.Serialport.Types
 
 
 -- | Open and configure a serial port
-openSerial :: String      -- ^ The filename of the serial port, such as @COM5@ or @\/\/.\/CNCA0@
+openSerial :: String      -- ^ The filename of the serial port, such as @COM5@ or @CNCA0@
            -> SerialPortSettings
            -> IO SerialPort
 openSerial dev settings = do
-  h <- createFile dev access_mode share_mode security_attr create_mode file_attr template_file
+  h <- createFile ("\\\\.\\" ++ dev) access_mode share_mode security_attr create_mode file_attr template_file
   let serial_port = SerialPort h defaultSerialSettings
   return =<< setSerialSettings serial_port settings
   where
