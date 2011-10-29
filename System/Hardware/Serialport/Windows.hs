@@ -1,7 +1,10 @@
+{-# LANGUAGE TupleSections, ViewPatterns #-}
 {-# OPTIONS_HADDOCK hide #-}
 module System.Hardware.Serialport.Windows where
 
 import Data.Bits
+import Data.ByteString (ByteString)
+import qualified Data.ByteString as BS
 import qualified System.Win32.Comm as Comm
 import System.Win32.Types
 import System.Win32.File
@@ -11,7 +14,6 @@ import Foreign.Marshal.Utils
 import Foreign.Marshal.Alloc
 import Foreign.Storable
 import System.Hardware.Serialport.Types
-
 
 -- | Open and configure a serial port
 openSerial :: String      -- ^ The filename of the serial port, such as @COM5@ or @CNCA0@
@@ -29,6 +31,23 @@ openSerial dev settings = do
     file_attr = fILE_ATTRIBUTE_NORMAL -- .|. fILE_FLAG_OVERLAPPED
     template_file = Nothing
 
+-- |@recv port n@ receives up to @n@ bytes over a serial port.
+recv :: SerialPort -> Int -> IO (Maybe ByteString)
+recv (SerialPort h _) (fromIntegral -> n) = 
+  allocaBytes n $ \p ->
+    win32_ReadFile h p n Nothing >>= fmap Just . packCStringLen . (p,)
+
+-- |@recvRetry port numRetries n@ tries up to @numRetries@ times to
+-- read a total of @n@ bytes over a serial port.
+recvRetry :: SerialPort -> Int -> Int -> IO (Maybe ByteString)
+recvRetry p _ n = recv p n
+
+-- |Send bytes over a serial port. Returns the number of bytes
+-- actually sent.
+send :: SerialPort -> ByteString -> IO Int
+send (SerialPort h _) msg = unsafeUseAsCString msg $ \p ->
+                            fromIntegral `fmap` win32_WriteFile h p n Nothing
+  where n = fromIntegral $ BS.length msg
 
 -- |Possibly receive a character unless the timeout given in openSerial is exceeded.
 recvChar :: SerialPort -> IO (Maybe Char)

@@ -34,6 +34,9 @@ module System.Hardware.Serialport (
   ,sendString
   ,recvChar
   ,recvString
+  ,send
+  ,recv
+  ,recvRetry
   ,flush
   -- ** Line control
   ,setDTR
