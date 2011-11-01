@@ -6,8 +6,8 @@
 -- > let port = "COM3"          -- Windows
 -- > let port = "/dev/ttyUSB0"  -- Linux
 -- > s <- openSerial port defaultSerialSettings { commSpeed = CS2400 }
--- > sendString s "AT\r"
--- > recvString s >>= print
+-- > sendChars s "AT\r"
+-- > recvChars s 10 >>= print
 -- > closeSerial s
 --
 
