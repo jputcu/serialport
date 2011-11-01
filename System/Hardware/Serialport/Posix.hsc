@@ -2,7 +2,7 @@
 {-# OPTIONS_HADDOCK hide #-}
 module System.Hardware.Serialport.Posix where
 
-import System.IO.Error
+import qualified Control.Exception as Ex
 import System.Posix.IO
 import System.Posix.Types
 import System.Posix.Terminal
@@ -24,7 +24,7 @@ openSerial dev settings = do
 -- |Possibly receive a character unless the timeout given in openSerial is exceeded.
 recvChar :: SerialPort -> IO (Maybe Char)
 recvChar (SerialPort fd' _) = do
-  result <- try $ fdRead fd' 1
+  result <- Ex.try $ fdRead fd' 1 :: IO (Either IOError (String, ByteCount))
   return $ case result of
              Right (str, _) -> Just $ head str
              Left _         -> Nothing
@@ -33,7 +33,7 @@ recvChar (SerialPort fd' _) = do
 -- |Receive a string
 recvString :: SerialPort -> IO String
 recvString (SerialPort fd' _) = do
-  result <- try $ fdRead fd' 128
+  result <- Ex.try $ fdRead fd' 128 :: IO (Either IOError (String, ByteCount))
   return $ case result of
              Right (str, _) -> str
              Left _         -> ""
