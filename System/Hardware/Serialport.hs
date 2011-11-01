@@ -30,10 +30,8 @@ module System.Hardware.Serialport (
   ,closeSerial
   ,withSerial
   -- ** Sending & receiving
-  ,sendChar
-  ,sendString
-  ,recvChar
-  ,recvString
+  ,sendChars
+  ,recvChars
   ,flush
   -- ** Line control
   ,setDTR

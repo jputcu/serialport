@@ -21,33 +21,20 @@ openSerial dev settings = do
   return =<< setSerialSettings serial_port settings
 
 
--- |Possibly receive a character unless the timeout given in openSerial is exceeded.
-recvChar :: SerialPort -> IO (Maybe Char)
-recvChar (SerialPort fd' _) = do
-  result <- Ex.try $ fdRead fd' 1 :: IO (Either IOError (String, ByteCount))
-  return $ case result of
-             Right (str, _) -> Just $ head str
-             Left _         -> Nothing
-
-
--- |Receive a string
-recvString :: SerialPort -> IO String
-recvString (SerialPort fd' _) = do
-  result <- Ex.try $ fdRead fd' 128 :: IO (Either IOError (String, ByteCount))
+-- |Receive characters, given the maximum number
+recvChars :: SerialPort -> Int -> IO String
+recvChars (SerialPort fd' _) n = do
+  result <- Ex.try $ fdRead fd' count :: IO (Either IOError (String, ByteCount))
   return $ case result of
              Right (str, _) -> str
              Left _         -> ""
+  where
+    count = fromIntegral n
 
 
--- |Send a character
-sendChar :: SerialPort -> Char -> IO ()
-sendChar (SerialPort fd' _ ) c =
-  fdWrite fd' [c] >> return ()
-
-
--- |Send a string
-sendString :: SerialPort -> String -> IO ()
-sendString (SerialPort fd' _) s =
+-- |Send characters
+sendChars :: SerialPort -> String -> IO ()
+sendChars (SerialPort fd' _ ) s =
   fdWrite fd' s >> return ()
 
 

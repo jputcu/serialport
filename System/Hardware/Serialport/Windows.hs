@@ -5,11 +5,8 @@ import Data.Bits
 import qualified System.Win32.Comm as Comm
 import System.Win32.Types
 import System.Win32.File
-import Foreign.C.Types
 import Foreign.C.String
-import Foreign.Marshal.Utils
 import Foreign.Marshal.Alloc
-import Foreign.Storable
 import System.Hardware.Serialport.Types
 
 
@@ -30,44 +27,20 @@ openSerial dev settings = do
     template_file = Nothing
 
 
--- |Possibly receive a character unless the timeout given in openSerial is exceeded.
-recvChar :: SerialPort -> IO (Maybe Char)
-recvChar (SerialPort h _) =
-  allocaBytes 1 $ \ p_n -> do
-    received <- win32_ReadFile h p_n count overlapped
-    if received == 0
-      then return Nothing
-      else do c <- peek p_n :: IO CChar
-              return $ Just $ castCCharToChar c
-  where
-    count = 1
-    overlapped = Nothing
-
-
--- |Receive a string
-recvString :: SerialPort -> IO String
-recvString (SerialPort h _) =
-  allocaBytes 128 $ \ p_n -> do
+-- |Receive characters, given the maximum number
+recvChars :: SerialPort -> Int -> IO String
+recvChars (SerialPort h _) n =
+  allocaBytes n $ \ p_n -> do
     recv_cnt <- win32_ReadFile h p_n count overlapped
     peekCStringLen (p_n, fromIntegral recv_cnt)
   where
-    count = 128
+    count = fromIntegral n
     overlapped = Nothing
 
 
--- |Send a character
-sendChar :: SerialPort -> Char -> IO ()
-sendChar (SerialPort h _) s =
-  with s (\ p_s -> do _ <- win32_WriteFile h p_s count overlapped
-                      return () )
-  where
-    count = 1
-    overlapped = Nothing
-
-
--- |Send a string
-sendString :: SerialPort -> String -> IO ()
-sendString (SerialPort h _) s =
+-- |Send characters
+sendChars :: SerialPort -> String -> IO ()
+sendChars (SerialPort h _) s =
   withCString s (\ p_s -> do _ <- win32_WriteFile h p_s (fromIntegral count) overlapped
                              return () )
   where
