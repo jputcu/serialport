@@ -62,7 +62,7 @@ data SerialPort = SerialPort {
 --
 --  - no flow control
 --
---  - 0.1 millisecond receive timeout
+--  - 0.1 second receive timeout
 --
 defaultSerialSettings :: SerialPortSettings
 defaultSerialSettings =
