@@ -17,7 +17,7 @@ openSerial :: FilePath            -- ^ The filename of the serial port, such as 
            -> IO SerialPort
 openSerial dev settings = do
   fd' <- openFd dev ReadWrite Nothing defaultFileFlags { noctty = True }
-  let serial_port = (SerialPort fd' defaultSerialSettings)
+  let serial_port = SerialPort fd' defaultSerialSettings
   return =<< setSerialSettings serial_port settings
 
 
@@ -146,8 +146,8 @@ withStopBits termOpts Two =
 
 configureSettings :: TerminalAttributes -> SerialPortSettings -> TerminalAttributes
 configureSettings termOpts settings =
-    termOpts `withInputSpeed` (commSpeedToBaudRate (commSpeed settings))
-             `withOutputSpeed` (commSpeedToBaudRate (commSpeed settings))
+    termOpts `withInputSpeed` commSpeedToBaudRate (commSpeed settings)
+             `withOutputSpeed` commSpeedToBaudRate (commSpeed settings)
              `withBits` fromIntegral (bitsPerWord settings)
              `withStopBits` stopb settings
              `withParity` parity settings
