@@ -8,6 +8,7 @@ import System.Win32.File
 import Foreign.C.String
 import Foreign.Marshal.Alloc
 import System.Hardware.Serialport.Types
+import Control.Monad
 
 
 -- | Open and configure a serial port
@@ -50,8 +51,13 @@ sendChars (SerialPort h _) s =
 
 -- |Flush buffers
 flush :: SerialPort -> IO ()
-flush (SerialPort h _) =
+flush s@(SerialPort h _) =
   flushFileBuffers h
+  >> consumeIncomingChars
+  where
+    consumeIncomingChars = do
+      ch <- recvChars s 1
+      when (ch /= "") consumeIncomingChars
 
 
 -- |Close the serial port
