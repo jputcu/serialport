@@ -12,7 +12,7 @@ import Control.Monad
 
 
 -- | Open and configure a serial port
-openSerial :: String      -- ^ The filename of the serial port, such as @COM5@ or @CNCA0@
+openSerial :: String      -- ^ Serial port, such as @COM5@ or @CNCA0@
            -> SerialPortSettings
            -> IO SerialPort
 openSerial dev settings = do
@@ -62,8 +62,7 @@ flush s@(SerialPort h _) =
 
 -- |Close the serial port
 closeSerial :: SerialPort -> IO ()
-closeSerial (SerialPort h _) =
-  closeHandle h
+closeSerial = closeHandle . handle
 
 
 -- |Set the Data Terminal Ready level
@@ -98,4 +97,4 @@ setSerialSettings (SerialPort h _) new_settings = do
 
 -- |Get configuration from serial port
 getSerialSettings :: SerialPort -> SerialPortSettings
-getSerialSettings (SerialPort _ settings) = settings
+getSerialSettings = portSettings

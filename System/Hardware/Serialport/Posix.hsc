@@ -12,7 +12,7 @@ import Foreign.C
 
 
 -- |Open and configure a serial port
-openSerial :: FilePath            -- ^ The filename of the serial port, such as @\/dev\/ttyS0@ or @\/dev\/ttyUSB0@
+openSerial :: FilePath            -- ^ Serial port, such as @\/dev\/ttyS0@ or @\/dev\/ttyUSB0@
            -> SerialPortSettings
            -> IO SerialPort
 openSerial dev settings = do
@@ -46,8 +46,7 @@ flush (SerialPort fd' _) =
 
 -- |Close the serial port
 closeSerial :: SerialPort -> IO ()
-closeSerial (SerialPort fd' _ ) =
-  closeFd fd'
+closeSerial = closeFd . fd
 
 
 #include <sys/ioctl.h>
@@ -101,7 +100,7 @@ setSerialSettings (SerialPort fd' _) new_settings = do
 
 -- |Get configuration from serial port
 getSerialSettings :: SerialPort -> SerialPortSettings
-getSerialSettings (SerialPort _ settings) = settings
+getSerialSettings = portSettings
 
 
 withParity :: TerminalAttributes -> Parity -> TerminalAttributes

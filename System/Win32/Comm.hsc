@@ -46,12 +46,12 @@ instance Storable SerialPortSettings where
     #{poke DCB, XonLim} buf (2048 :: WORD)
     #{poke DCB, XoffLim} buf (512 :: WORD)
     #{poke DCB, ByteSize} buf (bitsPerWord settings :: BYTE)
-    #{poke DCB, Parity} buf (case (parity settings) of
+    #{poke DCB, Parity} buf (case parity settings of
                                NoParity -> #const NOPARITY
                                Odd      -> #const ODDPARITY
                                Even     -> #const EVENPARITY
                                :: BYTE)
-    #{poke DCB, StopBits} buf (case (stopb settings) of
+    #{poke DCB, StopBits} buf (case stopb settings of
                                One -> #const ONESTOPBIT
                                Two -> #const TWOSTOPBITS
                                :: BYTE)

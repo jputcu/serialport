@@ -46,7 +46,7 @@ data SerialPort = SerialPort {
 #else
                       fd :: Fd,
 #endif
-                      newSettings :: SerialPortSettings
+                      portSettings :: SerialPortSettings
                   }
 
 
