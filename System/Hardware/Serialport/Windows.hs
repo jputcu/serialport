@@ -2,10 +2,11 @@
 module System.Hardware.Serialport.Windows where
 
 import Data.Bits
+import qualified Data.ByteString.Char8 as B
+import qualified Data.ByteString.Unsafe as BU
 import qualified System.Win32.Comm as Comm
 import System.Win32.Types
 import System.Win32.File
-import Foreign.C.String
 import Foreign.Marshal.Alloc
 import System.Hardware.Serialport.Types
 import Control.Monad
@@ -28,24 +29,26 @@ openSerial dev settings = do
     template_file = Nothing
 
 
--- |Receive characters, given the maximum number
-recvChars :: SerialPort -> Int -> IO String
-recvChars (SerialPort h _) n =
-  allocaBytes n $ \ p_n -> do
-    recv_cnt <- win32_ReadFile h p_n count overlapped
-    peekCStringLen (p_n, fromIntegral recv_cnt)
+-- |Receive bytes, given the maximum number
+recv :: SerialPort -> Int -> IO B.ByteString
+recv (SerialPort h _) n =
+  allocaBytes n $ \p -> do
+    recv_cnt <- win32_ReadFile h p count overlapped
+    B.packCStringLen (p, fromIntegral recv_cnt)
   where
     count = fromIntegral n
     overlapped = Nothing
 
 
--- |Send characters
-sendChars :: SerialPort -> String -> IO ()
-sendChars (SerialPort h _) s =
-  withCString s (\ p_s -> do _ <- win32_WriteFile h p_s (fromIntegral count) overlapped
-                             return () )
+-- |Send bytes
+send :: SerialPort
+        -> B.ByteString
+        -> IO Int          -- ^ Number of bytes actually sent
+send (SerialPort h _) msg =
+  BU.unsafeUseAsCString msg $ \p ->
+    fromIntegral `fmap` win32_WriteFile h p count overlapped
   where
-    count = length s
+    count = fromIntegral $ B.length msg
     overlapped = Nothing
 
 
@@ -56,8 +59,8 @@ flush s@(SerialPort h _) =
   >> consumeIncomingChars
   where
     consumeIncomingChars = do
-      ch <- recvChars s 1
-      when (ch /= "") consumeIncomingChars
+      ch <- recv s 1
+      unless (ch == B.empty) consumeIncomingChars
 
 
 -- |Close the serial port

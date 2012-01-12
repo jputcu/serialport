@@ -2,12 +2,13 @@
 
 -- |This module provides the serial port interface.
 --
+-- > import qualified Data.ByteString.Char8 as B
 -- > import System.Hardware.Serialport
 -- > let port = "COM3"          -- Windows
 -- > let port = "/dev/ttyUSB0"  -- Linux
 -- > s <- openSerial port defaultSerialSettings { commSpeed = CS2400 }
--- > sendChars s "AT\r"
--- > recvChars s 10 >>= print
+-- > send s $ B.pack "AT\r"
+-- > recv s 10 >>= print
 -- > closeSerial s
 --
 
@@ -30,8 +31,8 @@ module System.Hardware.Serialport (
   ,closeSerial
   ,withSerial
   -- ** Sending & receiving
-  ,sendChars
-  ,recvChars
+  ,send
+  ,recv
   ,flush
   -- ** Line control
   ,setDTR
