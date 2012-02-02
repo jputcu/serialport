@@ -90,7 +90,7 @@ instance Storable SerialPortSettings where
 
 getCommState :: HANDLE -> IO SerialPortSettings
 getCommState h =
-  alloca (\dcbp -> do _ <- c_GetCommState h dcbp
+  alloca (\dcbp -> do failIfFalse_ "getCommState" $ c_GetCommState h dcbp
                       peek dcbp )
 
 
