@@ -17,7 +17,10 @@ openSerial :: FilePath            -- ^ Serial port, such as @\/dev\/ttyS0@ or @\
            -> SerialPortSettings
            -> IO SerialPort
 openSerial dev settings = do
-  fd' <- openFd dev ReadWrite Nothing defaultFileFlags { noctty = True, nonBlock = True }
+  let nonblock = case block settings of
+                      NonBlock  -> True
+                      Block _   -> False
+  fd' <- openFd dev ReadWrite Nothing defaultFileFlags { noctty = True, nonBlock = nonblock }
   let serial_port = SerialPort fd' defaultSerialSettings
   return =<< setSerialSettings serial_port settings
 
@@ -135,26 +138,29 @@ withStopBits termOpts Two =
 
 configureSettings :: TerminalAttributes -> SerialPortSettings -> TerminalAttributes
 configureSettings termOpts settings =
-    termOpts `withInputSpeed` commSpeedToBaudRate (commSpeed settings)
-             `withOutputSpeed` commSpeedToBaudRate (commSpeed settings)
-             `withBits` fromIntegral (bitsPerWord settings)
-             `withStopBits` stopb settings
-             `withParity` parity settings
-             `withFlowControl` flowControl settings
-             `withoutMode` EnableEcho
-             `withoutMode` EchoErase
-             `withoutMode` EchoKill
-             `withoutMode` ProcessInput
-             `withoutMode` ProcessOutput
-             `withoutMode` MapCRtoLF
-             `withoutMode` EchoLF
-             `withoutMode` HangupOnClose
-             `withoutMode` KeyboardInterrupts
-             `withoutMode` ExtendedFunctions
-             `withMode` LocalMode
-             `withMode` ReadEnable
-             `withTime` timeout settings
-             `withMinInput` 0
+    let timeout = case block settings of
+                       Block t     -> t
+                       NonBlock    -> 0
+    in termOpts `withInputSpeed` commSpeedToBaudRate (commSpeed settings)
+                `withOutputSpeed` commSpeedToBaudRate (commSpeed settings)
+                `withBits` fromIntegral (bitsPerWord settings)
+                `withStopBits` stopb settings
+                `withParity` parity settings
+                `withFlowControl` flowControl settings
+                `withoutMode` EnableEcho
+                `withoutMode` EchoErase
+                `withoutMode` EchoKill
+                `withoutMode` ProcessInput
+                `withoutMode` ProcessOutput
+                `withoutMode` MapCRtoLF
+                `withoutMode` EchoLF
+                `withoutMode` HangupOnClose
+                `withoutMode` KeyboardInterrupts
+                `withoutMode` ExtendedFunctions
+                `withMode` LocalMode
+                `withMode` ReadEnable
+                `withTime` timeout
+                `withMinInput` 0
 
 
 commSpeedToBaudRate :: CommSpeed -> BaudRate
