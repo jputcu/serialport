@@ -85,7 +85,10 @@ setSerialSettings :: SerialPort           -- ^ The currently opened serial port
                   -> SerialPortSettings   -- ^ The new settings
                   -> IO SerialPort        -- ^ New serial port
 setSerialSettings (SerialPort h _) new_settings = do
-  let ct = Comm.COMMTIMEOUTS {
+  let timeout = case block new_settings of
+                     Block t   -> t
+                     NonBlock  -> error "System.Hardware.Serialport.Windows: Non-blocking mode unsupported on Windows"
+      ct = Comm.COMMTIMEOUTS {
                     Comm.readIntervalTimeout = maxBound :: DWORD,
                     Comm.readTotalTimeoutMultiplier = maxBound :: DWORD,
                     Comm.readTotalTimeoutConstant = fromIntegral (timeout new_settings) * 100,

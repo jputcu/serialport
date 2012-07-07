@@ -29,6 +29,8 @@ data CommSpeed
 data StopBits = One | Two
 data Parity = Even | Odd | NoParity
 data FlowControl = Software | NoFlowControl
+data Blocking = Block Int     -- ^ Block and timeout after `n` tenths of a second
+              | NonBlock      -- ^ Don't block
 
 data SerialPortSettings = SerialPortSettings {
                       commSpeed    :: CommSpeed,   -- ^ baudrate
@@ -36,7 +38,7 @@ data SerialPortSettings = SerialPortSettings {
                       stopb        :: StopBits,    -- ^ Number of stop bits
                       parity       :: Parity,      -- ^ Type of parity
                       flowControl  :: FlowControl, -- ^ Type of flowcontrol
-                      timeout      :: Int          -- ^ Timeout when receiving a char in tenth of seconds
+                      block        :: Blocking     -- ^ Timeout when receiving a char in tenth of seconds
                   }
 
 
@@ -66,5 +68,5 @@ data SerialPort = SerialPort {
 --
 defaultSerialSettings :: SerialPortSettings
 defaultSerialSettings =
-  SerialPortSettings CS9600 8 One NoParity NoFlowControl 1
+  SerialPortSettings CS9600 8 One NoParity NoFlowControl (Block 1)
 
