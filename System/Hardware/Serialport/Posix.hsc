@@ -10,6 +10,64 @@ import System.Posix.Terminal
 import System.Hardware.Serialport.Types
 import Foreign
 import Foreign.C
+import GHC.IO.Handle
+import GHC.IO.Device
+import GHC.IO.BufferedIO
+import Data.Typeable.Internal
+import GHC.Fingerprint.Type
+import GHC.IO.Buffer
+
+
+data SerialPort = SerialPort {
+                      fd :: Fd,
+                      portSettings :: SerialPortSettings
+                  }
+
+
+
+instance RawIO SerialPort where
+  read (SerialPort fd' _) ptr n = return . fromIntegral =<< fdReadBuf fd' ptr (fromIntegral n)
+  readNonBlocking _ _ _ = error "readNonBlocking not implemented"
+  write (SerialPort fd' _) ptr n = fdWriteBuf fd' ptr (fromIntegral n) >> return ()
+  writeNonBlocking _ _ _ = error "writenonblocking not implemented"
+
+
+instance IODevice SerialPort where
+  ready _ _ _ = return True
+  close = closeSerial
+  isTerminal _ = return False
+  isSeekable _ = return False
+  seek _ _ _ = return ()
+  tell _ = return 0
+  getSize _ = return 0
+  setSize _ _ = return ()
+  setEcho _ _ = return ()
+  getEcho _ = return False
+  setRaw _ _ = return ()
+  devType _ = return Stream
+
+
+instance BufferedIO SerialPort where
+  newBuffer _ = newByteBuffer 100
+  fillReadBuffer = readBuf
+  fillReadBuffer0 = readBufNonBlocking
+  flushWriteBuffer = writeBuf
+  flushWriteBuffer0 = writeBufNonBlocking
+
+
+instance Typeable SerialPort where
+  typeOf _ = TypeRep (Fingerprint 0 0) (mkTyCon3 "" "" "") []
+
+
+-- |Open and configure a serial port returning a standard Handle
+hOpenSerial :: FilePath
+           -> SerialPortSettings
+           -> IO Handle
+hOpenSerial dev settings = do
+  ser <- openSerial dev settings
+  h <- mkDuplexHandle ser dev Nothing noNewlineTranslation
+  hSetBuffering h NoBuffering
+  return h
 
 
 -- |Open and configure a serial port
@@ -17,7 +75,7 @@ openSerial :: FilePath            -- ^ Serial port, such as @\/dev\/ttyS0@ or @\
            -> SerialPortSettings
            -> IO SerialPort
 openSerial dev settings = do
-  fd' <- openFd dev ReadWrite Nothing defaultFileFlags { noctty = True, nonBlock = True }
+  fd' <- openFd dev ReadWrite Nothing defaultFileFlags { noctty = True }
   let serial_port = SerialPort fd' defaultSerialSettings
   return =<< setSerialSettings serial_port settings
 

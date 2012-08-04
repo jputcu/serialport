@@ -27,6 +27,7 @@ module System.Hardware.Serialport (
   ,getSerialSettings
   -- * Serial methods
   -- ** Device
+  ,hOpenSerial
   ,openSerial
   ,closeSerial
   ,withSerial

@@ -1,13 +1,7 @@
-{-# LANGUAGE CPP #-}
 {-# OPTIONS_HADDOCK hide #-}
 module System.Hardware.Serialport.Types where
 
 import Data.Word
-#if defined(mingw32_HOST_OS)
-import System.Win32.Types (HANDLE)
-#else
-import System.Posix.Types (Fd)
-#endif
 
 
 -- | Supported baudrates
@@ -37,16 +31,6 @@ data SerialPortSettings = SerialPortSettings {
                       parity       :: Parity,      -- ^ Type of parity
                       flowControl  :: FlowControl, -- ^ Type of flowcontrol
                       timeout      :: Int          -- ^ Timeout when receiving a char in tenth of seconds
-                  }
-
-
-data SerialPort = SerialPort {
-#if defined(mingw32_HOST_OS)
-                      handle :: HANDLE,
-#else
-                      fd :: Fd,
-#endif
-                      portSettings :: SerialPortSettings
                   }
 
 

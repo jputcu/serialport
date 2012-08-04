@@ -10,6 +10,62 @@ import System.Win32.File
 import Foreign.Marshal.Alloc
 import System.Hardware.Serialport.Types
 import Control.Monad
+import GHC.IO.Handle
+import GHC.IO.Device
+import GHC.IO.BufferedIO
+import Data.Typeable
+import GHC.IO.Buffer
+
+
+data SerialPort = SerialPort {
+                      handle :: HANDLE,
+                      portSettings :: SerialPortSettings
+                  }
+
+
+instance RawIO SerialPort where
+  read (SerialPort h _) ptr n = return . fromIntegral =<< win32_ReadFile h ptr (fromIntegral n) Nothing
+  readNonBlocking _ _ _ = error "readNonBlocking not implemented"
+  write (SerialPort h _) ptr n = win32_WriteFile h ptr (fromIntegral n) Nothing >> return ()
+  writeNonBlocking _ _ _ = error "writenonblocking not implemented"
+
+
+instance IODevice SerialPort where
+  ready _ _ _ = return True
+  close = closeSerial
+  isTerminal _ = return False
+  isSeekable _ = return False
+  seek _ _ _ = return ()
+  tell _ = return 0
+  getSize _ = return 0
+  setSize _ _ = return ()
+  setEcho _ _ = return ()
+  getEcho _ = return False
+  setRaw _ _ = return ()
+  devType _ = return Stream
+
+
+instance BufferedIO SerialPort where
+  newBuffer _ = newByteBuffer 100
+  fillReadBuffer = readBuf
+  fillReadBuffer0 = readBufNonBlocking
+  flushWriteBuffer = writeBuf
+  flushWriteBuffer0 = writeBufNonBlocking
+
+
+instance Typeable SerialPort where
+  typeOf _ = mkTyConApp (mkTyCon "") []
+
+
+-- |Open and configure a serial port returning a standard Handle.
+hOpenSerial :: String
+           -> SerialPortSettings
+           -> IO Handle
+hOpenSerial dev settings = do
+  ser <- openSerial dev settings
+  h <- mkDuplexHandle ser dev Nothing noNewlineTranslation
+  hSetBuffering h NoBuffering
+  return h
 
 
 -- | Open and configure a serial port
