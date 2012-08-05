@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveDataTypeable #-}
 {-# OPTIONS_HADDOCK hide #-}
 module System.Hardware.Serialport.Windows where
 
@@ -21,6 +22,7 @@ data SerialPort = SerialPort {
                       handle :: HANDLE,
                       portSettings :: SerialPortSettings
                   }
+                  deriving (Typeable)
 
 
 instance RawIO SerialPort where
@@ -51,10 +53,6 @@ instance BufferedIO SerialPort where
   fillReadBuffer0 = readBufNonBlocking
   flushWriteBuffer = writeBuf
   flushWriteBuffer0 = writeBufNonBlocking
-
-
-instance Typeable SerialPort where
-  typeOf _ = mkTyConApp (mkTyCon "") []
 
 
 -- |Open and configure a serial port returning a standard Handle.

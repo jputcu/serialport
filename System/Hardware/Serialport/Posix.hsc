@@ -1,4 +1,4 @@
-{-# LANGUAGE ForeignFunctionInterface #-}
+{-# LANGUAGE ForeignFunctionInterface, DeriveDataTypeable  #-}
 {-# OPTIONS_HADDOCK hide #-}
 module System.Hardware.Serialport.Posix where
 
@@ -13,8 +13,7 @@ import Foreign.C
 import GHC.IO.Handle
 import GHC.IO.Device
 import GHC.IO.BufferedIO
-import Data.Typeable.Internal
-import GHC.Fingerprint.Type
+import Data.Typeable
 import GHC.IO.Buffer
 
 
@@ -22,7 +21,7 @@ data SerialPort = SerialPort {
                       fd :: Fd,
                       portSettings :: SerialPortSettings
                   }
-
+                  deriving (Typeable)
 
 
 instance RawIO SerialPort where
@@ -53,10 +52,6 @@ instance BufferedIO SerialPort where
   fillReadBuffer0 = readBufNonBlocking
   flushWriteBuffer = writeBuf
   flushWriteBuffer0 = writeBufNonBlocking
-
-
-instance Typeable SerialPort where
-  typeOf _ = TypeRep (Fingerprint 0 0) (mkTyCon3 "" "" "") []
 
 
 -- |Open and configure a serial port returning a standard Handle
