@@ -15,6 +15,7 @@ import GHC.IO.Device
 import GHC.IO.BufferedIO
 import Data.Typeable
 import GHC.IO.Buffer
+import GHC.IO.Encoding
 
 
 data SerialPort = SerialPort {
@@ -78,7 +79,10 @@ openSerial dev settings = do
 -- |Receive bytes, given the maximum number
 recv :: SerialPort -> Int -> IO B.ByteString
 recv (SerialPort fd' _) n = do
+  cur_enc <- getForeignEncoding
+  setForeignEncoding char8
   result <- Ex.try $ fdRead fd' count :: IO (Either IOError (String, ByteCount))
+  setForeignEncoding cur_enc
   return $ case result of
              Right (str, _) -> B.pack str
              Left _         -> B.empty
@@ -90,8 +94,12 @@ recv (SerialPort fd' _) n = do
 send :: SerialPort
         -> B.ByteString
         -> IO Int          -- ^ Number of bytes actually sent
-send (SerialPort fd' _ ) msg =
-  fromIntegral `fmap` fdWrite fd' (B.unpack msg)
+send (SerialPort fd' _ ) msg = do
+  cur_enc <- getForeignEncoding
+  setForeignEncoding char8
+  ret <- fdWrite fd' (B.unpack msg)
+  setForeignEncoding cur_enc
+  return $ fromIntegral ret
 
 
 -- |Flush buffers
