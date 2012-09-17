@@ -11,6 +11,17 @@
 -- > recv s 10 >>= print
 -- > closeSerial s
 --
+-- Or use the experimental interface with standard handles:
+--
+-- > import System.IO
+-- > import System.Hardware.Serialport
+-- > let port = "COM3"           -- Windows
+-- > let port = "/dev/ttyUSB0"   -- Linux
+-- > h <- hOpenSerial port defaultSerialSettings
+-- > hPutStr h "AT\r"
+-- > hGetLine h >>= print
+-- > hClose h
+
 
 module System.Hardware.Serialport (
   -- * Types
