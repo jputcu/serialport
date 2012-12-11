@@ -78,13 +78,20 @@ openSerial dev settings = do
   return =<< setSerialSettings serial_port settings
 
 
+-- |Use specific encoding for an action and restore old encoding afterwards
+withEncoding :: TextEncoding -> IO a -> IO a
+withEncoding encoding fun = do
+  cur_enc <- getForeignEncoding
+  setForeignEncoding encoding
+  result <- fun
+  setForeignEncoding cur_enc
+  return result
+
+
 -- |Receive bytes, given the maximum number
 recv :: SerialPort -> Int -> IO B.ByteString
 recv (SerialPort fd' _) n = do
-  cur_enc <- getForeignEncoding
-  setForeignEncoding char8
-  result <- Ex.try $ fdRead fd' count :: IO (Either IOError (String, ByteCount))
-  setForeignEncoding cur_enc
+  result <- withEncoding char8 $ Ex.try $ fdRead fd' count :: IO (Either IOError (String, ByteCount))
   case result of
      Right (str, cnt) -> do
                          print cnt
@@ -99,10 +106,7 @@ send :: SerialPort
         -> B.ByteString
         -> IO Int          -- ^ Number of bytes actually sent
 send (SerialPort fd' _ ) msg = do
-  cur_enc <- getForeignEncoding
-  setForeignEncoding char8
-  ret <- fdWrite fd' (B.unpack msg)
-  setForeignEncoding cur_enc
+  ret <- withEncoding char8 (fdWrite fd' (B.unpack msg))
   return $ fromIntegral ret
 
 
