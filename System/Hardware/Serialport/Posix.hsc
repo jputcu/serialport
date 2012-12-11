@@ -80,12 +80,16 @@ openSerial dev settings = do
 
 -- |Use specific encoding for an action and restore old encoding afterwards
 withEncoding :: TextEncoding -> IO a -> IO a
+#if MIN_VERSION_base(4,5,0)
 withEncoding encoding fun = do
   cur_enc <- getForeignEncoding
   setForeignEncoding encoding
   result <- fun
   setForeignEncoding cur_enc
   return result
+#else
+withEncoding _ fun = fun
+#endif
 
 
 -- |Receive bytes, given the maximum number
