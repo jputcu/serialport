@@ -28,7 +28,7 @@ data SerialPort = SerialPort {
 instance RawIO SerialPort where
   read (SerialPort h _) ptr n = return . fromIntegral =<< win32_ReadFile h ptr (fromIntegral n) Nothing
   readNonBlocking _ _ _ = error "readNonBlocking not implemented"
-  write (SerialPort h _) ptr n = win32_WriteFile h ptr (fromIntegral n) Nothing >> return ()
+  write (SerialPort h _) ptr n = void (win32_WriteFile h ptr (fromIntegral n) Nothing)
   writeNonBlocking _ _ _ = error "writenonblocking not implemented"
 
 

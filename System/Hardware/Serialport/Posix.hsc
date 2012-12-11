@@ -8,7 +8,7 @@ import System.Posix.IO
 import System.Posix.Types
 import System.Posix.Terminal
 import System.Hardware.Serialport.Types
-import Foreign
+import Foreign (Ptr, castPtr, alloca, peek, with)
 import Foreign.C
 import GHC.IO.Handle
 import GHC.IO.Device
@@ -16,6 +16,8 @@ import GHC.IO.BufferedIO
 import Data.Typeable
 import GHC.IO.Buffer
 import GHC.IO.Encoding
+import Control.Monad (void)
+import Data.Bits
 
 
 data SerialPort = SerialPort {
@@ -28,7 +30,7 @@ data SerialPort = SerialPort {
 instance RawIO SerialPort where
   read (SerialPort fd' _) ptr n = return . fromIntegral =<< fdReadBuf fd' ptr (fromIntegral n)
   readNonBlocking _ _ _ = error "readNonBlocking not implemented"
-  write (SerialPort fd' _) ptr n = fdWriteBuf fd' ptr (fromIntegral n) >> return ()
+  write (SerialPort fd' _) ptr n = void (fdWriteBuf fd' ptr (fromIntegral n))
   writeNonBlocking _ _ _ = error "writenonblocking not implemented"
 
 
