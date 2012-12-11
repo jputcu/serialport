@@ -1,7 +1,7 @@
 Name:           serialport
-Version:        0.4.5
-Cabal-Version:  >= 1.6
-Build-Type:     Custom
+Version:        0.4.6
+Cabal-Version:  >= 1.8
+Build-Type:     Simple
 license:        BSD3
 license-file:   LICENSE
 copyright:      (c) 2009-2011 Joris Putcuyps
@@ -30,3 +30,12 @@ Library
     Build-Depends:    Win32
     Other-Modules:    System.Hardware.Serialport.Windows
                       System.Win32.Comm
+
+Test-Suite Tests
+  type:               exitcode-stdio-1.0
+  main-is:            Tests.hs
+  hs-source-dirs:     tests
+  build-depends:      base,
+                      HUnit,
+                      bytestring,
+                      serialport

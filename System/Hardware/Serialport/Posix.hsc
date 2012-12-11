@@ -83,9 +83,11 @@ recv (SerialPort fd' _) n = do
   setForeignEncoding char8
   result <- Ex.try $ fdRead fd' count :: IO (Either IOError (String, ByteCount))
   setForeignEncoding cur_enc
-  return $ case result of
-             Right (str, _) -> B.pack str
-             Left _         -> B.empty
+  case result of
+     Right (str, cnt) -> do
+                         print cnt
+                         return $ B.pack str
+     Left _           -> return B.empty
   where
     count = fromIntegral n
 
