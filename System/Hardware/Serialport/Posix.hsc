@@ -97,10 +97,8 @@ recv :: SerialPort -> Int -> IO B.ByteString
 recv (SerialPort fd' _) n = do
   result <- withEncoding char8 $ Ex.try $ fdRead fd' count :: IO (Either IOError (String, ByteCount))
   case result of
-     Right (str, cnt) -> do
-                         print cnt
-                         return $ B.pack str
-     Left _           -> return B.empty
+     Right (str, _) -> return $ B.pack str
+     Left _         -> return B.empty
   where
     count = fromIntegral n
 
