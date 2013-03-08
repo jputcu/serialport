@@ -65,18 +65,15 @@ testHandle cs test_port control = TestCase $ do
 
 testDelay :: String -> SerialPort -> Test
 testDelay test_port control = TestCase $ do
-  s <- openSerial test_port defaultSerialSettings
+  s <- openSerial test_port defaultSerialSettings { timeout = 6 }
   let control_char = 'h'
   send control $ B.pack [control_char]
   assertEqual "configure serial port" [control_char] . B.unpack =<< recv control 100
 
   send s $ B.pack "a"
-  --threadDelay 1000
-  assertEqual "immediatly" "a" . B.unpack =<< recv s 10
-  assertEqual "immediatly" "A" . B.unpack =<< recv s 10
+  assertEqual "immediatly" "aA" . B.unpack =<< recv s 10
 
   send s $ B.pack "b"
-  --threadDelay 100000
   assertEqual "delay 50 ms" "bB" . B.unpack =<< recv s 10
 
   send s $ B.pack "c"
@@ -91,15 +88,16 @@ tests :: String -> SerialPort -> Test
 tests test_port control = TestList $ map (\(descr,fun) -> TestLabel descr (fun test_port control)) testCases
   where
     testCases = [
-      --("b1200 Serialport",  testSerialport CS1200),
-      --("b2400 Serialport",  testSerialport CS2400),
-      --("b4800 Serialport",  testSerialport CS4800),
-      --("b9600 Serialport",  testSerialport CS9600),
-      --("b19200 Serialport", testSerialport CS19200),
-      --("b57600 Serialport", testSerialport CS57600),
-      --("b115200 Serialport",testSerialport CS115200),
-      ("test delay",        testDelay)]
-      --("b9600 Handle",      testHandle CS9600)]
+      ("b1200 Serialport",  testSerialport CS1200),
+      ("b2400 Serialport",  testSerialport CS2400),
+      ("b4800 Serialport",  testSerialport CS4800),
+      ("b9600 Serialport",  testSerialport CS9600),
+      ("b19200 Serialport", testSerialport CS19200),
+      ("b57600 Serialport", testSerialport CS57600),
+      ("b115200 Serialport",testSerialport CS115200),
+      ("b9600 Handle",      testHandle CS9600),
+      ("test delay",        testDelay)
+      ]
 
 
 main :: IO ExitCode
@@ -109,3 +107,4 @@ main = do
   if failures cnts == 0
     then exitSuccess
     else exitFailure
+
