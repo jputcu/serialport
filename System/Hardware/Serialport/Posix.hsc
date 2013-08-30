@@ -73,7 +73,9 @@ openSerial :: FilePath            -- ^ Serial port, such as @\/dev\/ttyS0@ or @\
            -> SerialPortSettings
            -> IO SerialPort
 openSerial dev settings = do
-  fd' <- openFd dev ReadWrite Nothing defaultFileFlags { noctty = True }
+  -- fd' <- openFd dev ReadWrite Nothing defaultFileFlags { noctty = True }
+  fd' <- openFd dev ReadWrite Nothing defaultFileFlags { noctty = True, nonBlock = True }
+  setFdOption fd' NonBlockingRead False
   let serial_port = SerialPort fd' defaultSerialSettings
   return =<< setSerialSettings serial_port settings
 
