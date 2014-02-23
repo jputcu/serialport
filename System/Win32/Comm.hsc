@@ -45,7 +45,7 @@ instance Storable SerialPortSettings where
     #{poke DCB, wReserved} buf (0 :: WORD)
     #{poke DCB, XonLim} buf (2048 :: WORD)
     #{poke DCB, XoffLim} buf (512 :: WORD)
-    #{poke DCB, ByteSize} buf (bitsPerWord settings :: BYTE)
+    #{poke DCB, ByteSize} buf ((fromIntegral $ fromEnum $ byteSize settings) :: BYTE)
     #{poke DCB, Parity} buf (case parity settings of
                                NoParity -> #const NOPARITY
                                Odd      -> #const ODDPARITY
@@ -80,7 +80,7 @@ instance Storable SerialPortSettings where
     _XoffLim <- #{peek DCB, XoffLim} buf :: IO WORD
     return SerialPortSettings {
                  commSpeed = _commSpeed,
-                 bitsPerWord = _byteSize,
+                 byteSize = toEnum $ fromIntegral _byteSize,
                  stopb = _stopBits,
                  parity = _parity,
                  flowControl = NoFlowControl,
