@@ -17,12 +17,12 @@ data CommSpeed
   | CS38400
   | CS57600
   | CS115200
-  deriving (Show, Eq)
+  deriving (Show, Eq, Bounded)
 
 
-data StopBits = One | Two deriving (Show, Eq)
-data Parity = Even | Odd | NoParity deriving (Show, Eq)
-data FlowControl = Software | NoFlowControl deriving (Show, Eq)
+data StopBits = One | Two deriving (Show, Eq, Bounded)
+data Parity = Even | Odd | NoParity deriving (Show, Eq, Bounded)
+data FlowControl = Software | NoFlowControl deriving (Show, Eq, Bounded)
 
 data SerialPortSettings = SerialPortSettings {
                       commSpeed    :: CommSpeed,   -- ^ baudrate
