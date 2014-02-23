@@ -21,8 +21,8 @@ data CommSpeed
 
 
 data StopBits = One | Two deriving (Show, Eq, Bounded)
-data Parity = Even | Odd | NoParity deriving (Show, Eq, Bounded)
-data FlowControl = Software | NoFlowControl deriving (Show, Eq, Bounded)
+data Parity = Even | Odd | NoParity deriving (Show, Eq)
+data FlowControl = Software | NoFlowControl deriving (Show, Eq)
 
 data SerialPortSettings = SerialPortSettings {
                       commSpeed    :: CommSpeed,   -- ^ baudrate
