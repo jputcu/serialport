@@ -208,7 +208,7 @@ configureSettings :: TerminalAttributes -> SerialPortSettings -> TerminalAttribu
 configureSettings termOpts settings =
     termOpts `withInputSpeed` commSpeedToBaudRate (commSpeed settings)
              `withOutputSpeed` commSpeedToBaudRate (commSpeed settings)
-             `withBits` fromEnum (byteSize settings)
+             `withBits` fromIntegral (bitsPerWord settings)
              `withStopBits` stopb settings
              `withParity` parity settings
              `withFlowControl` flowControl settings

@@ -1,6 +1,8 @@
 {-# OPTIONS_HADDOCK hide #-}
 module System.Hardware.Serialport.Types where
 
+import Data.Word
+
 
 -- | Supported baudrates
 data CommSpeed
@@ -18,34 +20,13 @@ data CommSpeed
   deriving (Show, Eq, Bounded)
 
 
--- | Number of data bits in a byte
-data ByteSize
-  = FiveBitsByte
-  | SixBitsByte
-  | SevenBitsByte
-  | EightBitsByte
-  deriving (Show, Eq, Bounded)
-
-
-instance Enum ByteSize where
-  toEnum 5 = FiveBitsByte
-  toEnum 6 = SixBitsByte
-  toEnum 7 = SevenBitsByte
-  toEnum 8 = EightBitsByte
-  toEnum _ = error "unsupported byte size"
-  fromEnum FiveBitsByte = 5
-  fromEnum SixBitsByte = 6
-  fromEnum SevenBitsByte = 7
-  fromEnum EightBitsByte = 8
-
-
 data StopBits = One | Two deriving (Show, Eq, Bounded)
 data Parity = Even | Odd | NoParity deriving (Show, Eq)
 data FlowControl = Software | NoFlowControl deriving (Show, Eq)
 
 data SerialPortSettings = SerialPortSettings {
                       commSpeed    :: CommSpeed,   -- ^ baudrate
-                      byteSize     :: ByteSize,    -- ^ Number of data bits in a byte
+                      bitsPerWord  :: Word8,       -- ^ Number of bits in a word
                       stopb        :: StopBits,    -- ^ Number of stop bits
                       parity       :: Parity,      -- ^ Type of parity
                       flowControl  :: FlowControl, -- ^ Type of flowcontrol
@@ -69,5 +50,5 @@ data SerialPortSettings = SerialPortSettings {
 --
 defaultSerialSettings :: SerialPortSettings
 defaultSerialSettings =
-  SerialPortSettings CS9600 EightBitsByte One NoParity NoFlowControl 1
+  SerialPortSettings CS9600 8 One NoParity NoFlowControl 1
 
