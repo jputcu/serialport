@@ -14,6 +14,7 @@ description:    Cross platform haskell library for using the serial port.
 category:       Hardware
 Extra-Source-Files: README.md
                     CHANGELOG.md
+                    tests/haskell_serial_test/haskell_serial_test.ino
 
 source-repository head
   type:     git
