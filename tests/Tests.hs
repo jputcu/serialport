@@ -95,8 +95,8 @@ tests test_port control = TestList $ map (\(descr,fun) -> TestLabel descr (fun t
       ("b19200 Serialport", testSerialport CS19200),
       ("b57600 Serialport", testSerialport CS57600),
       ("b115200 Serialport",testSerialport CS115200),
-      ("b9600 Handle",      testHandle CS9600),
-      ("test delay",        testDelay)
+      ("b9600 Handle",      testHandle CS9600)
+      --("test delay",        testDelay)
       ]
 
 
