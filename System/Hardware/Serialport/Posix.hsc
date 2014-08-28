@@ -1,4 +1,7 @@
-{-# LANGUAGE ForeignFunctionInterface, DeriveDataTypeable  #-}
+{-# LANGUAGE ForeignFunctionInterface #-}
+{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE CPP #-}
+
 {-# OPTIONS_HADDOCK hide #-}
 module System.Hardware.Serialport.Posix where
 
@@ -73,8 +76,12 @@ openSerial :: FilePath            -- ^ Serial port, such as @\/dev\/ttyS0@ or @\
            -> SerialPortSettings
            -> IO SerialPort
 openSerial dev settings = do
+#ifdef OPEN_NONBLOCKING_HACK
   fd' <- openFd dev ReadWrite Nothing defaultFileFlags { noctty = True, nonBlock = True }
   setFdOption fd' NonBlockingRead False
+#else
+  fd' <- openFd dev ReadWrite Nothing defaultFileFlags { noctty = True }
+#endif
   let serial_port = SerialPort fd' defaultSerialSettings
   return =<< setSerialSettings serial_port settings
 
