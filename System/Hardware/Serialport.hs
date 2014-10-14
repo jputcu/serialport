@@ -61,5 +61,5 @@ import System.Hardware.Serialport.Types
 import qualified Control.Exception as Ex
 
 -- |Safer device function, so you don't forget to close the device
-withSerial :: String -> SerialPortSettings -> ( SerialPort -> IO a ) -> IO a
+withSerial :: FilePath -> SerialPortSettings -> ( SerialPort -> IO a ) -> IO a
 withSerial dev settings = Ex.bracket (openSerial dev settings) closeSerial
