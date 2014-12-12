@@ -28,71 +28,49 @@ void loop()
   if( Serial.available() )
   {
     int i = Serial.read();
-    switch(i)
+    long baudRate = 0;
+    switch (i)
     {
       case 'a':
-        Serial.write(i);
-        Serial1.end();
-        Serial1.begin(1200);
-        ConsumeAllSerial();
-        test_running = 1;
-        expected_char = lowest_expected_char;
+        baudRate = 1200;
         break;
       case 'b':
-        Serial.write(i);
-        Serial1.end();
-        Serial1.begin(2400);
-        ConsumeAllSerial();
-        test_running = 1;
-        expected_char = lowest_expected_char;
+        baudRate = 2400;
         break;
       case 'c':
-        Serial.write(i);
-        Serial1.end();
-        Serial1.begin(4800);
-        ConsumeAllSerial();
-        test_running = 1;
-        expected_char = lowest_expected_char;
+        baudRate = 4800;
         break;
       case 'd':
-        Serial.write(i);
-        Serial1.end();
-        Serial1.begin(9600);
-        ConsumeAllSerial();
-        test_running = 1;
-        expected_char = lowest_expected_char;
+      case 'h':
+        baudRate = 9600;
         break;
       case 'e':
-        Serial.write(i);
-        Serial1.end();
-        Serial1.begin(19200);
-        ConsumeAllSerial();
-        test_running = 1;
-        expected_char = lowest_expected_char;
+        baudRate = 19200;
         break;
       case 'f':
-        Serial.write(i);
-        Serial1.end();
-        Serial1.begin(57600);
-        ConsumeAllSerial();
-        test_running = 1;
-        expected_char = lowest_expected_char;
+        baudRate = 57600;
         break;
       case 'g':
-        Serial.write(i);
-        Serial1.end();
-        Serial1.begin(115200);
-        ConsumeAllSerial();
-        test_running = 1;
-        expected_char = lowest_expected_char;
+        baudRate = 115200;
         break;
-      case 'h':
-        Serial.write(i);
-        Serial1.end();
-        Serial1.begin(9600);
-        ConsumeAllSerial();
-        test_running = 2;
-        break;
+      default:
+        return;
+    }
+
+    Serial.write(i);
+    Serial1.end();
+    Serial1.begin(baudRate);
+    ConsumeAllSerial();
+
+    if (i == 'h')
+    {
+      test_running = 2;
+
+    }
+    else
+    {
+      test_running = 1;
+      expected_char = lowest_expected_char;
     }
   }
 
