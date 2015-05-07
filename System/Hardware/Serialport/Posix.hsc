@@ -233,6 +233,7 @@ commSpeedToBaudRate :: CommSpeed -> BaudRate
 commSpeedToBaudRate speed =
     case speed of
       CS110 -> B110
+      CS150 -> B150
       CS300 -> B300
       CS600 -> B600
       CS1200 -> B1200
@@ -243,5 +244,8 @@ commSpeedToBaudRate speed =
       CS38400 -> B38400
       CS57600 -> B57600
       CS115200 -> B115200
+      CS230400 -> B230400
+      CS460800 -> B460800
+      CS921600 -> B921600
 
 

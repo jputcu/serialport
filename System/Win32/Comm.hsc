@@ -220,6 +220,7 @@ commSpeedToBaudRate :: CommSpeed -> Int
 commSpeedToBaudRate cs =
     case cs of
       CS110 -> (#const CBR_110)
+      CS150 -> 150
       CS300 -> (#const CBR_300)
       CS600 -> (#const CBR_600)
       CS1200 -> (#const CBR_1200)
@@ -230,3 +231,6 @@ commSpeedToBaudRate cs =
       CS38400 -> (#const CBR_38400)
       CS57600 -> (#const CBR_57600)
       CS115200 -> (#const CBR_115200)
+      CS230400 -> 230400
+      CS460800 -> 460800
+      CS921600 -> 921600
