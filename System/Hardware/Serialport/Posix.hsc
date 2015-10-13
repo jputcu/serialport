@@ -11,12 +11,8 @@ import System.Hardware.Serialport.Types
 import Foreign (Ptr, castPtr, alloca, peek, with)
 import Foreign.C
 import GHC.IO.Handle
-import GHC.IO.Device
-import GHC.IO.BufferedIO
 import Data.Typeable
-import GHC.IO.Buffer
 import GHC.IO.Encoding
-import Control.Monad (void)
 import Data.Bits
 
 
@@ -27,43 +23,13 @@ data SerialPort = SerialPort {
                   deriving (Typeable)
 
 
-instance RawIO SerialPort where
-  read (SerialPort fd' _) ptr n = return . fromIntegral =<< fdReadBuf fd' ptr (fromIntegral n)
-  readNonBlocking _ _ _ = error "readNonBlocking not implemented"
-  write (SerialPort fd' _) ptr n = void (fdWriteBuf fd' ptr (fromIntegral n))
-  writeNonBlocking _ _ _ = error "writenonblocking not implemented"
-
-
-instance IODevice SerialPort where
-  ready _ _ _ = return True
-  close = closeSerial
-  isTerminal _ = return False
-  isSeekable _ = return False
-  seek _ _ _ = return ()
-  tell _ = return 0
-  getSize _ = return 0
-  setSize _ _ = return ()
-  setEcho _ _ = return ()
-  getEcho _ = return False
-  setRaw _ _ = return ()
-  devType _ = return Stream
-
-
-instance BufferedIO SerialPort where
-  newBuffer _ = newByteBuffer 100
-  fillReadBuffer = readBuf
-  fillReadBuffer0 = readBufNonBlocking
-  flushWriteBuffer = writeBuf
-  flushWriteBuffer0 = writeBufNonBlocking
-
-
 -- |Open and configure a serial port returning a standard Handle
 hOpenSerial :: FilePath
            -> SerialPortSettings
            -> IO Handle
 hOpenSerial dev settings = do
-  ser <- openSerial dev settings
-  h <- mkDuplexHandle ser dev Nothing noNewlineTranslation
+  (SerialPort fd' _) <- openSerial dev settings
+  h <- fdToHandle fd'
   hSetBuffering h NoBuffering
   return h
 
