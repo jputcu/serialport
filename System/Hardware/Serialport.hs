@@ -49,6 +49,8 @@ module System.Hardware.Serialport (
   -- ** Line control
   ,setDTR
   ,setRTS
+  -- ** Converting to Handle
+  ,serialPortToHandle
   ) where
 
 #if defined(mingw32_HOST_OS)
