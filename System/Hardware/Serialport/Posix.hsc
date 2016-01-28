@@ -245,3 +245,7 @@ commSpeedToBaudRate speed =
       CS115200 -> B115200
 
 
+-- | Converts a 'SerialPort' into a 'Handle' that can be used with the standard
+-- Haskell IO library (see "System.IO").
+serialPortToHandle :: SerialPort -> IO Handle
+serialPortToHandle = fdToHandle . fd
