@@ -243,5 +243,7 @@ commSpeedToBaudRate speed =
       CS38400 -> B38400
       CS57600 -> B57600
       CS115200 -> B115200
+      CSOther x -> BOther x
+
 
 

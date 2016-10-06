@@ -17,7 +17,8 @@ data CommSpeed
   | CS38400
   | CS57600
   | CS115200
-  deriving (Show, Eq, Bounded)
+  | CSOther Word64
+  deriving (Show, Eq)
 
 
 data StopBits = One | Two deriving (Show, Eq, Bounded)
