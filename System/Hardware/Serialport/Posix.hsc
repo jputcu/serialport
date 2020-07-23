@@ -8,7 +8,7 @@ import System.Posix.IO
 import System.Posix.Types
 import System.Posix.Terminal
 import System.Hardware.Serialport.Types
-import Foreign (Ptr, castPtr, alloca, peek, with)
+import Foreign (Ptr, nullPtr, castPtr, alloca, peek, with)
 import Foreign.C
 import GHC.IO.Handle
 import GHC.IO.Device
@@ -74,6 +74,7 @@ openSerial :: FilePath            -- ^ Serial port, such as @\/dev\/ttyS0@ or @\
            -> IO SerialPort
 openSerial dev settings = do
   fd' <- openFd dev ReadWrite Nothing defaultFileFlags { noctty = True, nonBlock = True }
+  setTIOCEXCL fd'
   setFdOption fd' NonBlockingRead False
   let serial_port = SerialPort fd' defaultSerialSettings
   return =<< setSerialSettings serial_port settings
@@ -142,6 +143,11 @@ getTIOCM fd' =
 setTIOCM :: Fd -> Int -> IO ()
 setTIOCM fd' val =
   with val $ cIoctl' fd' #{const TIOCMSET}
+
+
+setTIOCEXCL :: Fd -> IO ()
+setTIOCEXCL fd' =
+  cIoctl' fd' #{const TIOCEXCL} nullPtr
 
 
 -- |Set the Data Terminal Ready level
